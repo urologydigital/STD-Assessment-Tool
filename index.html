@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="STI Assessment and Management Tool - Evidence-based clinical decision support">
+    <title>STI Assessment & Management Tool</title>
+    <style>
+        /* Safari-compatible CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            display: block;
+        }
+
+        .section.hidden {
+            display: none;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #17a2b8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin: 8px 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 12px 0 4px 0;
+            color: #333;
+        }
+
+        h2 {
+            color: #667eea;
+            margin: 20px 0 15px 0;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 18px 0 12px 0;
+        }
+
+        ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .report {
+            display: none;
+            padding: 20px;
+        }
+
+        .report.active {
+            display: block;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .header {
+                background: #667eea;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .btn {
+                display: none;
+            }
+            .section {
+                display: none;
+            }
+            .report {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 STI Assessment & Management Tool</h1>
+            <p>Evidence-based clinical decision support | EAU · NICE · GIRFT · BNF · BASHH Guidelines</p>
+        </div>
+
+        <div class="content">
+            <!-- Main Form Section -->
+            <div class="section" id="main-form">
+                <h2 class="section-title">STI Clinical Assessment Form</h2>
+
+                <div class="info-box">
+                    <strong>Quick Start:</strong> This tool provides comprehensive STI management guidance based on current UK clinical guidelines. Complete the form below to generate a detailed clinical report with treatment recommendations.
+                </div>
+
+                <label for="patient-id">Patient Identifier (Initials/ID) *</label>
+                <input type="text" id="patient-id" placeholder="e.g., AB123" required>
+
+                <label for="patient-age">Age *</label>
+                <input type="number" id="patient-age" placeholder="Years" min="0" max="120" required>
+
+                <label>Sex Assigned at Birth *</label>
+                <div style="margin: 10px 0;">
+                    <label style="display: inline-block; margin-right: 20px;">
+                        <input type="radio" name="sex" value="Male" style="width: auto; margin-right: 5px;">
+                        Male
+                    </label>
+                    <label style="display: inline-block;">
+                        <input type="radio" name="sex" value="Female" style="width: auto; margin-right: 5px;">
+                        Female
+                    </label>
+                </div>
+
+                <label for="symptoms">Presenting Symptoms</label>
+                <textarea id="symptoms" rows="4" placeholder="Describe symptoms, duration, and severity..."></textarea>
+
+                <label for="sti-suspected">Suspected STI(s)</label>
+                <select id="sti-suspected" multiple size="8">
+                    <option value="chlamydia">Chlamydia trachomatis</option>
+                    <option value="gonorrhoea">Neisseria gonorrhoeae (Gonorrhoea)</option>
+                    <option value="syphilis">Treponema pallidum (Syphilis)</option>
+                    <option value="trichomonas">Trichomonas vaginalis</option>
+                    <option value="hsv">Herpes Simplex Virus (HSV)</option>
+                    <option value="hpv">Human Papillomavirus (HPV/Warts)</option>
+                    <option value="mycoplasma">Mycoplasma genitalium</option>
+                    <option value="hiv">HIV</option>
+                    <option value="hepatitis-b">Hepatitis B</option>
+                    <option value="hepatitis-c">Hepatitis C</option>
+                    <option value="bv">Bacterial Vaginosis</option>
+                    <option value="candida">Vulvovaginal Candidiasis</option>
+                    <option value="pid">Pelvic Inflammatory Disease</option>
+                    <option value="lgv">Lymphogranuloma Venereum (LGV)</option>
+                    <option value="epididymo">Epididymo-orchitis</option>
+                </select>
+                <small style="color: #666;">Hold Ctrl/Cmd to select multiple</small>
+
+                <label>Pregnancy Status (if applicable)</label>
+                <div style="margin: 10px 0;">
+                    <label style="display: inline-block; margin-right: 20px;">
+                        <input type="radio" name="pregnancy" value="Not Pregnant" style="width: auto; margin-right: 5px;" checked>
+                        Not Pregnant
+                    </label>
+                    <label style="display: inline-block; margin-right: 20px;">
+                        <input type="radio" name="pregnancy" value="Pregnant" style="width: auto; margin-right: 5px;">
+                        Pregnant
+                    </label>
+                    <label style="display: inline-block;">
+                        <input type="radio" name="pregnancy" value="N/A" style="width: auto; margin-right: 5px;">
+                        N/A
+                    </label>
+                </div>
+
+                <label for="allergies">Drug Allergies</label>
+                <textarea id="allergies" rows="3" placeholder="List any drug allergies (especially penicillins, cephalosporins, macrolides, tetracyclines, quinolones)..."></textarea>
+
+                <label for="sexual-history">Sexual History (past 3 months)</label>
+                <textarea id="sexual-history" rows="4" placeholder="Number of partners, types of sexual contact, condom use, last sexual contact date..."></textarea>
+
+                <label for="examination">Clinical Examination Findings</label>
+                <textarea id="examination" rows="4" placeholder="General examination, genital examination, additional findings..."></textarea>
+
+                <div style="margin-top: 30px;">
+                    <button class="btn" onclick="generateReport()">Generate Clinical Report</button>
+                    <button class="btn" onclick="resetForm()" style="background: #6c757d; margin-left: 10px;">Reset Form</button>
+                </div>
+            </div>
+
+            <!-- Report Section -->
+            <div class="report" id="clinical-report">
+                <!-- Report content will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Safari-compatible JavaScript
+        function generateReport() {
+            // Get form data
+            const patientId = document.getElementById('patient-id').value;
+            const age = document.getElementById('patient-age').value;
+            const sex = document.querySelector('input[name="sex"]:checked')?.value;
+            const symptoms = document.getElementById('symptoms').value;
+            const stiSelect = document.getElementById('sti-suspected');
+            const selectedSTIs = Array.from(stiSelect.selectedOptions).map(opt => ({
+                value: opt.value,
+                text: opt.text
+            }));
+            const pregnancy = document.querySelector('input[name="pregnancy"]:checked')?.value;
+            const allergies = document.getElementById('allergies').value;
+            const sexualHistory = document.getElementById('sexual-history').value;
+            const examination = document.getElementById('examination').value;
+
+            // Validation
+            if (!patientId || !age || !sex) {
+                alert('Please complete all required fields marked with *');
+                return;
+            }
+
+            if (selectedSTIs.length === 0) {
+                alert('Please select at least one suspected STI');
+                return;
+            }
+
+            // Generate report HTML
+            let reportHTML = `
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h2 style="color: white; margin: 0;">STI Assessment & Management Report</h2>
+                    <p style="margin: 10px 0 0 0;">Generated: ${new Date().toLocaleString('en-GB')}</p>
+                </div>
+
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>1. Patient Information</h2>
+                    <p><strong>Patient ID:</strong> ${patientId}</p>
+                    <p><strong>Age:</strong> ${age} years</p>
+                    <p><strong>Sex:</strong> ${sex}</p>
+                    <p><strong>Pregnancy Status:</strong> ${pregnancy}</p>
+                    ${allergies ? `<p><strong>Drug Allergies:</strong> ${allergies}</p>` : '<p><strong>Drug Allergies:</strong> None recorded</p>'}
+                </div>
+
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>2. Clinical Presentation</h2>
+                    <h3>Presenting Symptoms</h3>
+                    <p>${symptoms || 'Not documented'}</p>
+                    <h3>Sexual History</h3>
+                    <p>${sexualHistory || 'Not documented'}</p>
+                    <h3>Clinical Examination</h3>
+                    <p>${examination || 'Not documented'}</p>
+                </div>
+
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>3. Suspected STI(s)</h2>
+                    <ul>
+                        ${selectedSTIs.map(sti => `<li>${sti.text}</li>`).join('')}
+                    </ul>
+                </div>
+
+                ${generateTreatmentSection(selectedSTIs, pregnancy, allergies, age)}
+
+                <div style="margin-top: 30px;">
+                    <button class="btn" onclick="window.print()">Print Report</button>
+                    <button class="btn" onclick="backToForm()" style="background: #6c757d; margin-left: 10px;">Back to Form</button>
+                </div>
+            `;
+
+            // Display report
+            document.getElementById('clinical-report').innerHTML = reportHTML;
+            document.getElementById('main-form').classList.add('hidden');
+            document.getElementById('clinical-report').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function generateTreatmentSection(stis, pregnancy, allergies, age) {
+            const isPregnant = pregnancy === 'Pregnant';
+            const allergyText = (allergies || '').toLowerCase();
+            
+            let html = `
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>4. Recommended Diagnostic Workup</h2>
+                    <h3>Essential Tests</h3>
+                    <ul>
+                        <li><strong>NAAT testing:</strong> Chlamydia & Gonorrhoea from appropriate sites (urine/urethral/cervical/rectal/pharyngeal based on sexual history)</li>
+                        <li><strong>Syphilis serology:</strong> EIA/CLIA screening with RPR/VDRL and TPPA confirmation if positive</li>
+                        <li><strong>HIV testing:</strong> 4th generation HIV-1/2 antibody and p24 antigen test</li>
+                        <li><strong>Hepatitis screening:</strong> HBsAg, anti-HBc, anti-HCV (with reflex HCV RNA if positive)</li>
+                        <li><strong>Pregnancy test:</strong> For all women of childbearing age before treatment</li>
+                    </ul>
+                    
+                    <div class="info-box">
+                        <strong>Specimen Collection Guidance:</strong>
+                        <ul>
+                            <li>First-void urine: ≥20ml, collected ≥1 hour after last void</li>
+                            <li>Collect from all sites of sexual contact (genital, rectal, pharyngeal)</li>
+                            <li>HSV PCR from ulcer base if genital ulcers present</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>5. Treatment Recommendations</h2>
+            `;
+
+            if (isPregnant) {
+                html += `
+                    <div class="warning-box">
+                        <strong>PREGNANCY:</strong> Patient is pregnant. Only pregnancy-safe medications listed below.
+                        <br><strong>AVOID:</strong> Tetracyclines, Quinolones, High-dose Metronidazole in 1st trimester
+                    </div>
+                `;
+            }
+
+            if (allergies) {
+                html += `
+                    <div class="warning-box">
+                        <strong>DRUG ALLERGIES NOTED:</strong> ${allergies}
+                        <br>Alternative regimens provided below where applicable.
+                    </div>
+                `;
+            }
+
+            // Generate treatment for each selected STI
+            stis.forEach(sti => {
+                html += generateSTITreatment(sti.value, sti.text, isPregnant, allergyText, age);
+            });
+
+            html += `
+                    <div class="success-box">
+                        <strong>General Post-Treatment Advice:</strong>
+                        <ul>
+                            <li>Abstain from sexual contact until treatment completed AND symptoms resolved AND partner(s) treated</li>
+                            <li>Typically 7 days after single-dose treatment or completion of course</li>
+                            <li>Complete full course of antibiotics even if symptoms improve</li>
+                            <li>Return if symptoms persist/worsen or new symptoms develop</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>6. Follow-up & Partner Notification</h2>
+                    <h3>Test of Cure & Follow-up Schedule</h3>
+                    <ul>
+                        <li><strong>Gonorrhoea:</strong> MANDATORY test of cure at 3-7 days (NAAT + culture)</li>
+                        <li><strong>Chlamydia:</strong> Test of cure at 5-6 weeks (mandatory if pregnancy, rectal infection)</li>
+                        <li><strong>Mycoplasma:</strong> MANDATORY test of cure at 5 weeks</li>
+                        <li><strong>Syphilis:</strong> Serology at 3, 6, and 12 months (expect 4-fold decline in titre)</li>
+                        <li><strong>HIV PEP:</strong> Follow-up HIV testing at 4 and 12 weeks</li>
+                    </ul>
+
+                    <h3>Partner Notification</h3>
+                    <p><strong>Key Principles:</strong></p>
+                    <ul>
+                        <li>All sexual partners within the lookback period must be notified and tested</li>
+                        <li>Chlamydia: Past 4 weeks (or last partner)</li>
+                        <li>Gonorrhoea: Past 3 months</li>
+                        <li>Syphilis: 3-6 months depending on stage</li>
+                        <li>PID/Epididymo-orchitis: Past 6 months</li>
+                        <li>Partners should receive epidemiological treatment before test results</li>
+                    </ul>
+                </div>
+
+                <div style="background: white; padding: 20px; border-left: 4px solid #667eea; margin-bottom: 20px; border-radius: 8px;">
+                    <h2>7. Patient Education & Health Promotion</h2>
+                    <h3>Safe Sex Practices</h3>
+                    <ul>
+                        <li>Consistent and correct condom use for all sexual contacts</li>
+                        <li>Reduce number of sexual partners</li>
+                        <li>Regular STI screening if sexually active with new/multiple partners (3-6 monthly)</li>
+                        <li>Mutual monogamy with tested partner</li>
+                    </ul>
+
+                    <h3>Vaccination Recommendations</h3>
+                    <ul>
+                        <li><strong>HPV vaccine:</strong> Up to age 26 (both sexes), MSM up to 45</li>
+                        <li><strong>Hepatitis B:</strong> All at STI risk (accelerated schedule: 0, 1, 2, 12 months)</li>
+                        <li><strong>Hepatitis A:</strong> MSM, chronic liver disease patients</li>
+                    </ul>
+
+                    <h3>Support Resources</h3>
+                    <ul>
+                        <li>NHS Sexual Health Services: Free, confidential testing and treatment</li>
+                        <li>BASHH patient information: www.bashh.org</li>
+                        <li>Terrence Higgins Trust: www.tht.org.uk</li>
+                    </ul>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function generateSTITreatment(stiValue, stiName, isPregnant, allergyText, age) {
+            let html = `<h3>${stiName}</h3>`;
+
+            switch(stiValue) {
+                case 'chlamydia':
+                    html += `
+                        <p><strong>First-line Treatment:</strong></p>
+                        <ul>
+                            ${!isPregnant && !allergyText.includes('doxycycline') && !allergyText.includes('tetracycline') ? 
+                                '<li><strong>Doxycycline</strong> 100mg twice daily PO for 7 days (FIRST-LINE)</li>' : ''}
+                            ${isPregnant || allergyText.includes('doxycycline') || allergyText.includes('tetracycline') ? 
+                                '<li><strong>Azithromycin</strong> 1g PO single dose ' + (isPregnant ? '(SAFE IN PREGNANCY)' : '') + '</li>' : 
+                                '<li><strong>Azithromycin</strong> 1g PO single dose (alternative)</li>'}
+                        </ul>
+                        <p><strong>Test of Cure:</strong> 5-6 weeks post-treatment (mandatory if pregnant, rectal infection)</p>
+                        <p><strong>Partner Notification:</strong> All partners in past 4 weeks (or last partner if >4 weeks)</p>
+                    `;
+                    break;
+
+                case 'gonorrhoea':
+                    html += `
+                        <p><strong>First-line Treatment:</strong></p>
+                        <ul>
+                            <li><strong>Ceftriaxone</strong> 1g IM single dose</li>
+                            <li>Consider adding: <strong>Doxycycline</strong> 100mg BD for 7 days if chlamydia co-infection suspected</li>
+                        </ul>
+                        <div class="warning-box">
+                            <strong>CRITICAL:</strong> Test of cure is MANDATORY at 3-7 days (NAAT + culture). Report treatment failures immediately.
+                        </div>
+                        <p><strong>Partner Notification:</strong> All partners in past 3 months</p>
+                    `;
+                    break;
+
+                case 'syphilis':
+                    html += `
+                        <p><strong>Treatment (based on stage):</strong></p>
+                        <ul>
+                            <li><strong>Early syphilis (primary, secondary, early latent):</strong> Benzathine benzylpenicillin 2.4 million units IM single dose</li>
+                            <li><strong>Late latent syphilis:</strong> Benzathine benzylpenicillin 2.4 million units IM weekly for 3 weeks</li>
+                            ${!isPregnant && allergyText.includes('penicillin') ? 
+                                '<li><strong>Penicillin allergy (non-pregnant):</strong> Doxycycline 100mg BD for 14 days (early) or 28 days (late)</li>' : ''}
+                        </ul>
+                        ${isPregnant && allergyText.includes('penicillin') ? `
+                            <div class="warning-box">
+                                <strong>PREGNANCY + PENICILLIN ALLERGY:</strong> URGENT specialist referral required for penicillin desensitization
+                            </div>
+                        ` : ''}
+                        <p><strong>Jarisch-Herxheimer Reaction:</strong> Warn patient about fever, headache, myalgia within 24h. Advise paracetamol.</p>
+                        <p><strong>Follow-up:</strong> Serology at 3, 6, 12 months - expect 4-fold decline in titre</p>
+                    `;
+                    break;
+
+                case 'trichomonas':
+                    html += `
+                        <p><strong>Treatment:</strong></p>
+                        <ul>
+                            <li><strong>Metronidazole</strong> 400-500mg twice daily PO for 5-7 days (FIRST-LINE)</li>
+                            <li><strong>Alternative:</strong> Metronidazole 2g PO single dose</li>
+                        </ul>
+                        <div class="warning-box">
+                            <strong>ALCOHOL WARNING:</strong> Patient MUST avoid alcohol during treatment AND for 48 hours after last dose (disulfiram-like reaction)
+                        </div>
+                        <p><strong>Partner Treatment:</strong> Treat all sexual partners simultaneously</p>
+                    `;
+                    break;
+
+                case 'hsv':
+                    html += `
+                        <p><strong>Treatment (based on episode type):</strong></p>
+                        <ul>
+                            <li><strong>First episode:</strong> Aciclovir 400mg three times daily PO for 5 days (extend to 10 if new lesions)</li>
+                            <li><strong>Recurrent episodes:</strong> Aciclovir 400mg TDS or 800mg TDS for 3-5 days</li>
+                            <li><strong>Suppressive therapy (≥6 episodes/year):</strong> Aciclovir 400mg twice daily for 6-12 months</li>
+                        </ul>
+                        ${isPregnant ? `
+                            <p><strong>Pregnancy:</strong> Aciclovir is safe. Consider suppressive therapy from 36 weeks to reduce recurrence at delivery.</p>
+                        ` : ''}
+                        <p><strong>Patient Advice:</strong> Can transmit even without visible lesions. Suppressive therapy reduces transmission by ~50%.</p>
+                    `;
+                    break;
+
+                case 'hpv':
+                    html += `
+                        <p><strong>Treatment Options:</strong></p>
+                        <p><em>Patient-applied:</em></p>
+                        <ul>
+                            ${!isPregnant ? '<li><strong>Podophyllotoxin 0.5%</strong> applied twice daily for 3 days, then 4-day rest, repeat weekly for max 4 weeks</li>' : ''}
+                            ${!isPregnant ? '<li><strong>Imiquimod 5% cream</strong> applied 3 times weekly at bedtime, wash off after 6-10 hours, continue up to 16 weeks</li>' : ''}
+                        </ul>
+                        <p><em>Provider-applied:</em></p>
+                        <ul>
+                            <li><strong>Cryotherapy</strong> with liquid nitrogen weekly until clear ${isPregnant ? '(SAFE IN PREGNANCY)' : ''}</li>
+                            <li><strong>Trichloroacetic acid (TCA) 80-90%</strong> applied weekly ${isPregnant ? '(SAFE IN PREGNANCY)' : ''}</li>
+                        </ul>
+                        ${isPregnant ? `
+                            <div class="warning-box">
+                                <strong>PREGNANCY:</strong> ONLY use cryotherapy or TCA. AVOID podophyllotoxin and imiquimod.
+                            </div>
+                        ` : ''}
+                        <p><strong>HPV Vaccination:</strong> Offer to eligible patients (up to age 26, or MSM up to 45)</p>
+                    `;
+                    break;
+
+                case 'mycoplasma':
+                    html += `
+                        <p><strong>Sequential Treatment (to reduce resistance):</strong></p>
+                        <ul>
+                            <li><strong>Step 1:</strong> Doxycycline 100mg twice daily PO for 7 days</li>
+                            <li><strong>Step 2:</strong> Then Azithromycin 1g day 1, then 500mg daily for days 2-4</li>
+                            <li><strong>If macrolide-resistant:</strong> Moxifloxacin 400mg daily PO for 7-10 days (after doxycycline)</li>
+                        </ul>
+                        <div class="warning-box">
+                            <strong>Test of Cure MANDATORY:</strong> NAAT at 5 weeks post-treatment. Macrolide resistance >40% in many areas.
+                        </div>
+                        <p><strong>Partner Notification:</strong> All partners in past 3 months</p>
+                    `;
+                    break;
+
+                case 'lgv':
+                    html += `
+                        <p><strong>Treatment:</strong></p>
+                        <ul>
+                            <li><strong>Doxycycline</strong> 100mg twice daily PO for <strong>21 days</strong> (NOT 7 days like uncomplicated chlamydia)</li>
+                            <li><strong>Alternative:</strong> Azithromycin 1g weekly for 3 weeks</li>
+                        </ul>
+                        <div class="info-box">
+                            <strong>Key Difference:</strong> LGV requires 21 days treatment (vs 7 days for uncomplicated chlamydia)
+                        </div>
+                        <p><strong>HIV Testing:</strong> Always test for HIV when diagnosing LGV (strong epidemiological link)</p>
+                    `;
+                    break;
+
+                case 'hiv':
+                    html += `
+                        <div class="warning-box">
+                            <strong>URGENT SPECIALIST REFERRAL REQUIRED:</strong> All newly diagnosed HIV patients must be referred to HIV specialist services within 2 weeks
+                        </div>
+                        <p><strong>Post-Exposure Prophylaxis (PEP) - if within 72 hours:</strong></p>
+                        <ul>
+                            <li>Tenofovir DF/Emtricitabine 245/200mg once daily + Raltegravir 400mg twice daily for 28 days</li>
+                            <li>Baseline tests: HIV Ag/Ab, HBV, HCV, renal function, pregnancy test</li>
+                            <li>Follow-up HIV testing at 4 and 12 weeks</li>
+                        </ul>
+                        <p><strong>Pre-Exposure Prophylaxis (PrEP):</strong> Refer to sexual health services for assessment</p>
+                    `;
+                    break;
+
+                case 'hepatitis-b':
+                    html += `
+                        <div class="warning-box">
+                            <strong>SPECIALIST REFERRAL:</strong> All acute and chronic HBV require hepatology/infectious diseases referral
+                        </div>
+                        <p><strong>Post-Exposure Prophylaxis (within 48 hours):</strong></p>
+                        <ul>
+                            <li>If unvaccinated: HBIG 500 IU IM + HBV vaccine (accelerated schedule: 0, 1, 2, 12 months)</li>
+                            <li>If fully vaccinated with known response: No PEP needed</li>
+                        </ul>
+                        <p><strong>Vaccination:</strong> Accelerated schedule for high-risk individuals</p>
+                    `;
+                    break;
+
+                case 'hepatitis-c':
+                    html += `
+                        <div class="warning-box">
+                            <strong>SPECIALIST REFERRAL:</strong> All HCV-positive patients require hepatology referral for direct-acting antivirals (DAAs)
+                        </div>
+                        <p><strong>No PEP Available</strong> - Monitor with HCV RNA at 6-12 weeks if exposure</p>
+                        <p><strong>Treatment:</strong> DAAs achieve >95% cure rate (8-12 weeks treatment) - specialist prescribed</p>
+                        <p><strong>Harm Reduction:</strong> If PWID - needle exchange, safe injecting advice, drug treatment services</p>
+                    `;
+                    break;
+
+                case 'bv':
+                    html += `
+                        <p><strong>Treatment:</strong></p>
+                        <ul>
+                            <li><strong>Metronidazole</strong> 400-500mg twice daily PO for 5-7 days (FIRST-LINE)</li>
+                            <li><strong>Alternative:</strong> Metronidazole gel 0.75% intravaginally for 5 nights</li>
+                            <li><strong>Alternative:</strong> Clindamycin 300mg twice daily PO for 7 days</li>
+                        </ul>
+                        <p><strong>Partner Treatment:</strong> NOT recommended - partner treatment does not reduce recurrence</p>
+                        ${isPregnant ? `
+                            <p><strong>Pregnancy:</strong> Metronidazole safe after first trimester. Treatment recommended if symptomatic.</p>
+                        ` : ''}
+                    `;
+                    break;
+
+                case 'candida':
+                    html += `
+                        <p><strong>Treatment:</strong></p>
+                        <ul>
+                            <li><strong>Clotrimazole 500mg pessary</strong> single dose intravaginally (FIRST-LINE)</li>
+                            ${!isPregnant ? '<li><strong>Fluconazole</strong> 150mg PO single dose (alternative)</li>' : ''}
+                            <li><strong>Clotrimazole 1% cream</strong> for vulval symptoms (apply thinly 2-3 times daily)</li>
+                        </ul>
+                        ${isPregnant ? `
+                            <div class="warning-box">
+                                <strong>PREGNANCY:</strong> ONLY topical azoles (7-day course). AVOID oral fluconazole.
+                            </div>
+                        ` : ''}
+                        <p><strong>Recurrent VVC (≥4 episodes/year):</strong> Induction therapy followed by maintenance (fluconazole 150mg weekly for 6 months)</p>
+                    `;
+                    break;
+
+                case 'pid':
+                    html += `
+                        <p><strong>Outpatient Treatment:</strong></p>
+                        <ul>
+                            <li><strong>Ceftriaxone</strong> 1g IM single dose</li>
+                            <li>PLUS <strong>Doxycycline</strong> 100mg twice daily PO for 14 days</li>
+                            <li>PLUS <strong>Metronidazole</strong> 400mg twice daily PO for 14 days</li>
+                        </ul>
+                        <div class="warning-box">
+                            <strong>ADMIT TO HOSPITAL IF:</strong> Severe symptoms, diagnostic uncertainty, pelvic abscess, pregnancy, no response to oral therapy after 72h
+                        </div>
+                        <p><strong>Follow-up:</strong> Review at 72 hours - admit if no improvement</p>
+                        <p><strong>Partner Notification:</strong> All partners in past 6 months</p>
+                    `;
+                    break;
+
+                case 'epididymo':
+                    const ageNum = parseInt(age);
+                    if (ageNum < 35) {
+                        html += `
+                            <p><strong>STI-Related (Age <35 or sexually active):</strong></p>
+                            <ul>
+                                <li><strong>Ceftriaxone</strong> 1g IM single dose</li>
+                                <li>PLUS <strong>Doxycycline</strong> 100mg twice daily PO for 10-14 days</li>
+                            </ul>
+                            <p><strong>Supportive:</strong> NSAIDs, scrotal support, rest</p>
+                        `;
+                    } else {
+                        html += `
+                            <p><strong>Enteric Organisms (Age >35):</strong></p>
+                            <ul>
+                                <li><strong>Ofloxacin</strong> 200mg twice daily PO for 14 days</li>
+                                <li>OR <strong>Ciprofloxacin</strong> 500mg twice daily PO for 14 days</li>
+                            </ul>
+                            <p><strong>Supportive:</strong> NSAIDs, scrotal support, rest</p>
+                        `;
+                    }
+                    html += `
+                        <div class="warning-box">
+                            <strong>URGENT SURGICAL REFERRAL IF:</strong> Suspected testicular torsion, abscess, or no improvement after 72h
+                        </div>
+                    `;
+                    break;
+
+                default:
+                    html += `<p>Treatment guidance for ${stiName} - refer to current guidelines.</p>`;
+            }
+
+            return html;
+        }
+
+        function backToForm() {
+            document.getElementById('main-form').classList.remove('hidden');
+            document.getElementById('clinical-report').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+                document.getElementById('patient-id').value = '';
+                document.getElementById('patient-age').value = '';
+                document.querySelectorAll('input[name="sex"]').forEach(r => r.checked = false);
+                document.getElementById('symptoms').value = '';
+                document.getElementById('sti-suspected').selectedIndex = -1;
+                document.querySelector('input[name="pregnancy"][value="Not Pregnant"]').checked = true;
+                document.getElementById('allergies').value = '';
+                document.getElementById('sexual-history').value = '';
+                document.getElementById('examination').value = '';
+                window.scrollTo(0, 0);
+            }
+        }
+
+        // Set default date on load
+        window.addEventListener('load', function() {
+            console.log('STI Assessment Tool loaded successfully');
+        });
+    </script>
+</body>
+</html>
